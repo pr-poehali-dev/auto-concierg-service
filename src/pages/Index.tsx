@@ -193,12 +193,13 @@ export default function Index() {
               <span className="text-sm text-[#999] hidden md:block">Нажмите на карточку, чтобы узнать подробнее</span>
             </div>
           </div>
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-5 gap-4">
             {[
               { icon: "Sparkles", title: "Мойка авто", desc: "Отвезём на мойку или химчистку и вернём к вам", slug: "wash" },
               { icon: "Wrench", title: "Отвезти на СТО", desc: "Доставим на сервис, дождёмся и пригоним обратно", slug: "sto" },
               { icon: "Route", title: "Перегон авто", desc: "Из точки А в точку Б с оплатой за км или фикс цена", slug: "transfer" },
               { icon: "RotateCw", title: "Шиномонтаж", desc: "Сезонная смена резины без очередей и вашего участия", slug: "tires" },
+              { icon: "Wine", title: "Трезвый водитель", desc: "Приедем, сядем за руль вашего авто и довезём вас домой", slug: "sober-driver" },
             ].map((item) => (
               <Link
                 key={item.title}
