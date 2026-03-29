@@ -21,7 +21,7 @@ const SERVICES = {
         icon: "Phone",
         title: "Оставьте заявку",
         desc: "Укажите адрес, тип мойки (обычная или химчистка) и удобное время. Мы свяжемся для подтверждения в течение 10 минут.",
-        detail: "Работаем ежедневно с 07:00 до 23:00",
+        detail: "Работаем круглосуточно, без выходных",
       },
       {
         num: "02",
@@ -51,7 +51,7 @@ const SERVICES = {
       { icon: "Video", text: "Видеорегистратор в машине" },
       { icon: "Camera", text: "Фотоотчёт до и после" },
       { icon: "MapPin", text: "GPS-запись маршрута" },
-      { icon: "Clock", text: "Работаем 07:00–23:00" },
+      { icon: "Clock", text: "Работаем круглосуточно" },
     ],
     faq: [
       {
@@ -121,7 +121,7 @@ const SERVICES = {
       { icon: "Video", text: "Видеорегистратор в машине" },
       { icon: "Bell", text: "Уведомления о статусе" },
       { icon: "MapPin", text: "GPS-запись маршрута" },
-      { icon: "Clock", text: "Работаем 07:00–23:00" },
+      { icon: "Clock", text: "Работаем круглосуточно" },
     ],
     faq: [
       {
@@ -261,7 +261,7 @@ const SERVICES = {
       { icon: "Video", text: "Видеорегистратор в машине" },
       { icon: "Package", text: "Погрузка/разгрузка резины" },
       { icon: "MapPin", text: "GPS-запись маршрута" },
-      { icon: "Clock", text: "Работаем 07:00–23:00" },
+      { icon: "Clock", text: "Работаем круглосуточно" },
     ],
     faq: [
       {
@@ -301,7 +301,7 @@ const SERVICES = {
         icon: "Phone",
         title: "Оставьте заявку",
         desc: "Укажите адрес, где вы находитесь, и адрес, куда нужно доехать. Мы подтвердим заявку в течение 5 минут и сообщим время прибытия водителя.",
-        detail: "Работаем ежедневно с 18:00 до 06:00",
+        detail: "Работаем круглосуточно, без выходных",
       },
       {
         num: "02",
@@ -330,7 +330,7 @@ const SERVICES = {
       { icon: "Video", text: "Видеорегистратор в машине" },
       { icon: "MapPin", text: "GPS-трек маршрута" },
       { icon: "UserCheck", text: "Проверенный водитель" },
-      { icon: "Clock", text: "Работаем 18:00–06:00" },
+      { icon: "Clock", text: "Работаем круглосуточно" },
       { icon: "Phone", text: "Связь на протяжении поездки" },
     ],
     faq: [
@@ -586,7 +586,7 @@ export default function ServicePage() {
                 {[
                   "Страховка на каждую поездку",
                   "Приём по акту с фотофиксацией",
-                  "Ежедневно с 07:00 до 23:00",
+                  "Круглосуточно, без выходных",
                 ].map((t) => (
                   <div key={t} className="flex items-center gap-3 text-sm text-white/60">
                     <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: service.accent }} />
@@ -630,7 +630,7 @@ export default function ServicePage() {
           <Link to="/" className="text-lg font-semibold tracking-tight">
             Авто<span className="text-[#F59E0B]">Консьерж</span>
           </Link>
-          <div className="text-sm text-white/40">Москва и область · Ежедневно 07:00–23:00</div>
+          <div className="text-sm text-white/40">Москва и область · Круглосуточно</div>
           <a href="tel:+74951234567" className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-2">
             <Icon name="Phone" size={14} />
             +7 (495) 123-45-67
@@ -641,8 +641,11 @@ export default function ServicePage() {
   );
 }
 
+const SEND_EMAIL_URL = "https://functions.poehali.dev/410daec2-64c7-4708-8a7a-d96509108767";
+
 function BookingForm({ accent, serviceName }: { accent: string; serviceName: string }) {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", address: "", comment: "" });
 
   if (submitted) {
@@ -660,9 +663,21 @@ function BookingForm({ accent, serviceName }: { accent: string; serviceName: str
     );
   }
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    await fetch(SEND_EMAIL_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, service: serviceName }),
+    }).catch(() => {});
+    setSending(false);
+    setSubmitted(true);
+  };
+
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
+      onSubmit={handleSubmit}
       className="space-y-4"
     >
       <div className="text-sm text-white/40 mb-6">{serviceName}</div>
@@ -698,10 +713,11 @@ function BookingForm({ accent, serviceName }: { accent: string; serviceName: str
       />
       <button
         type="submit"
-        className="w-full py-4 text-white font-semibold text-sm transition-opacity hover:opacity-90"
+        disabled={sending}
+        className="w-full py-4 text-white font-semibold text-sm transition-opacity hover:opacity-90 disabled:opacity-60"
         style={{ background: accent }}
       >
-        Отправить заявку
+        {sending ? "Отправляем..." : "Отправить заявку"}
       </button>
     </form>
   );

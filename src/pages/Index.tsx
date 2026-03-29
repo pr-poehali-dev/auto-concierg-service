@@ -65,14 +65,25 @@ const faqs = [
   },
 ];
 
+const SEND_EMAIL_URL = "https://functions.poehali.dev/410daec2-64c7-4708-8a7a-d96509108767";
+
 export default function Index() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState("transfer");
   const [bookingForm, setBookingForm] = useState({ name: "", phone: "", address: "", date: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const handleBook = (e: React.FormEvent) => {
+  const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSending(true);
+    const serviceLabel = services.find((s) => s.id === selectedService)?.label || selectedService;
+    await fetch(SEND_EMAIL_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...bookingForm, service: serviceLabel }),
+    }).catch(() => {});
+    setSending(false);
     setSubmitted(true);
   };
 
@@ -241,7 +252,7 @@ export default function Index() {
                   "Проверенные водители с опытом от 5 лет",
                   "Страхование каждой поездки",
                   "Видеорегистратор на каждом маршруте",
-                  "Работаем 7 дней в неделю, с 07:00 до 23:00",
+                  "Работаем круглосуточно, без выходных",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3 text-sm">
                     <div className="w-1.5 h-1.5 bg-[#F59E0B] rounded-full flex-shrink-0" />
@@ -327,7 +338,7 @@ export default function Index() {
                 {[
                   { icon: "Phone", text: "+7 (999) 000-00-00" },
                   { icon: "MessageCircle", text: "Telegram / WhatsApp" },
-                  { icon: "Clock", text: "Ежедневно 07:00 — 23:00" },
+                  { icon: "Clock", text: "Круглосуточно, без выходных" },
                 ].map((c) => (
                   <div key={c.text} className="flex items-center gap-3 text-sm text-[#666]">
                     <Icon name={c.icon} size={16} className="text-[#F59E0B]" />
@@ -410,10 +421,11 @@ export default function Index() {
                   </div>
                   <button
                     type="submit"
-                    className="bg-[#141414] text-white py-4 font-medium text-sm hover:bg-[#333] transition-colors mt-2 flex items-center justify-center gap-2"
+                    disabled={sending}
+                    className="bg-[#141414] text-white py-4 font-medium text-sm hover:bg-[#333] transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-60"
                   >
-                    Отправить заявку
-                    <Icon name="ArrowRight" size={16} />
+                    {sending ? "Отправляем..." : "Отправить заявку"}
+                    {!sending && <Icon name="ArrowRight" size={16} />}
                   </button>
                   <p className="text-xs text-[#999] text-center">
                     Нажимая кнопку, вы соглашаетесь с обработкой персональных данных
@@ -469,7 +481,7 @@ export default function Index() {
                   { icon: "Phone", label: "Телефон", value: "+7 (999) 000-00-00" },
                   { icon: "Mail", label: "Email", value: "info@avto-concierge.ru" },
                   { icon: "MapPin", label: "Город", value: "Москва и область" },
-                  { icon: "Clock", label: "Режим работы", value: "Ежедневно, 07:00 — 23:00" },
+                  { icon: "Clock", label: "Режим работы", value: "Круглосуточно, без выходных" },
                 ].map((c) => (
                   <div key={c.label} className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-[#141414] flex items-center justify-center flex-shrink-0">
