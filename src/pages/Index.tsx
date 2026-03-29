@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 
 const HERO_IMG = "https://cdn.poehali.dev/projects/131e6353-e3ec-4f75-819f-49222c805821/files/ac9ce39a-4610-4f0f-ad85-8879c9ba8c4c.jpg";
@@ -185,20 +186,35 @@ export default function Index() {
       {/* SERVICES HIGHLIGHT */}
       <section className="py-16 bg-[#EEECEA]">
         <div className="max-w-6xl mx-auto px-6">
+          <div className="mb-8">
+            <div className="text-xs uppercase tracking-[0.2em] text-[#F59E0B] mb-2">Сценарии</div>
+            <div className="flex items-end justify-between">
+              <h2 className="font-display text-3xl font-medium">Что мы делаем</h2>
+              <span className="text-sm text-[#999] hidden md:block">Нажмите на карточку, чтобы узнать подробнее</span>
+            </div>
+          </div>
           <div className="grid md:grid-cols-4 gap-4">
             {[
-              { icon: "Route", title: "Перегон", desc: "Из точки А в точку Б с оплатой за км или фикс цена" },
-              { icon: "Sparkles", title: "Мойка", desc: "Отвезём на мойку или химчистку и вернём к вам" },
-              { icon: "Wrench", title: "СТО", desc: "Доставим на сервис, дождёмся и пригоним обратно" },
-              { icon: "ShieldCheck", title: "Страховка", desc: "Каждая поездка застрахована и зафиксирована на видео" },
+              { icon: "Sparkles", title: "Мойка авто", desc: "Отвезём на мойку или химчистку и вернём к вам", slug: "wash" },
+              { icon: "Wrench", title: "Отвезти на СТО", desc: "Доставим на сервис, дождёмся и пригоним обратно", slug: "sto" },
+              { icon: "Route", title: "Перегон авто", desc: "Из точки А в точку Б с оплатой за км или фикс цена", slug: "transfer" },
+              { icon: "RotateCw", title: "Шиномонтаж", desc: "Сезонная смена резины без очередей и вашего участия", slug: "tires" },
             ].map((item) => (
-              <div key={item.title} className="bg-white p-7 hover-lift">
+              <Link
+                key={item.title}
+                to={`/service/${item.slug}`}
+                className="bg-white p-7 hover:shadow-md transition-all group block"
+              >
                 <div className="w-11 h-11 bg-[#141414] flex items-center justify-center mb-5">
                   <Icon name={item.icon} size={20} className="text-[#F59E0B]" />
                 </div>
                 <h3 className="font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-[#666] leading-relaxed">{item.desc}</p>
-              </div>
+                <p className="text-sm text-[#666] leading-relaxed mb-4">{item.desc}</p>
+                <div className="flex items-center gap-1.5 text-xs text-[#F59E0B] font-medium">
+                  Как это работает
+                  <Icon name="ArrowRight" size={12} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
             ))}
           </div>
         </div>
